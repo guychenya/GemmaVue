@@ -37,7 +37,7 @@ const App: React.FC = () => {
       setSearchResults(result || "No relevant data found in session.");
     } catch (err) {
       console.error(err);
-      setSearchResults("### ⚠️ Search Engine Error\nUnable to reach MedGemma vision core. Please verify API configuration.");
+      setSearchResults("# ⚠️ Search Engine Error\nUnable to reach MedGemma vision core. Please verify API configuration.");
     } finally {
       setIsSearching(false);
     }
@@ -158,19 +158,59 @@ const App: React.FC = () => {
                     </div>
                  </div>
                  
-                 <div className="p-10 whitespace-pre-wrap">
-                   {/* 
-                     Rendering simplified Markdown structure manually for clinical clarity 
-                     In a real app, a library like react-markdown would be used. 
-                   */}
-                   <div className="clinical-report-content space-y-6">
+                 <div className="p-10">
+                   <div className="clinical-report-content space-y-4">
                      {searchResults.split('\n').map((line, i) => {
-                       if (line.startsWith('# ')) return <h1 key={i} className="text-3xl font-bold text-white mb-8 border-b border-slate-800 pb-4">{line.replace('# ', '')}</h1>;
-                       if (line.startsWith('## ')) return <h2 key={i} className="text-xl font-bold text-blue-400 mt-10 mb-4 flex items-center gap-2">{line.replace('## ', '')}</h2>;
-                       if (line.startsWith('### ')) return <h3 key={i} className="text-lg font-semibold text-slate-200 mt-6 mb-2">{line.replace('### ', '')}</h3>;
-                       if (line.startsWith('* ') || line.startsWith('- ')) return <div key={i} className="flex gap-3 text-slate-300 ml-4 mb-2"><span className="text-blue-500 mt-1">•</span><span>{line.substring(2)}</span></div>;
-                       if (line.trim() === '') return <div key={i} className="h-4" />;
-                       return <p key={i} className="text-slate-300 leading-relaxed text-base">{line}</p>;
+                       const trimmedLine = line.trim();
+                       if (trimmedLine.startsWith('# ')) {
+                         return <h1 key={i} className="text-2xl font-bold text-white mt-4 mb-6 border-b border-slate-800/80 pb-3">{trimmedLine.replace('# ', '')}</h1>;
+                       }
+                       if (trimmedLine.startsWith('## ')) {
+                         return <h2 key={i} className="text-xl font-bold text-blue-400 mt-8 mb-3 flex items-center gap-2">{trimmedLine.replace('## ', '')}</h2>;
+                       }
+                       if (trimmedLine.startsWith('### ')) {
+                         return <h3 key={i} className="text-lg font-semibold text-slate-100 mt-6 mb-2">{trimmedLine.replace('### ', '')}</h3>;
+                       }
+                       if (trimmedLine.startsWith('* ') || trimmedLine.startsWith('- ')) {
+                         return (
+                           <div key={i} className="flex gap-3 text-slate-300 ml-4 mb-1.5 leading-relaxed">
+                             <span className="text-blue-500 font-bold">•</span>
+                             <span>{trimmedLine.replace(/^[* -] /, '')}</span>
+                           </div>
+                         );
+                       }
+                       if (/^\d+\. /.test(trimmedLine)) {
+                         return (
+                           <div key={i} className="flex gap-3 text-slate-300 ml-4 mb-2 leading-relaxed">
+                             <span className="text-blue-500 font-bold font-mono">{trimmedLine.match(/^\d+/)?.[0]}.</span>
+                             <span>{trimmedLine.replace(/^\d+\. /, '')}</span>
+                           </div>
+                         );
+                       }
+                       if (trimmedLine === '---') {
+                         return <hr key={i} className="border-slate-800 my-8" />;
+                       }
+                       if (trimmedLine.startsWith('> ')) {
+                         return (
+                           <blockquote key={i} className="border-l-4 border-slate-700 bg-slate-900/40 p-4 my-6 italic text-slate-400 text-sm rounded-r-xl">
+                             {trimmedLine.replace('> ', '')}
+                           </blockquote>
+                         );
+                       }
+                       if (trimmedLine === '') return <div key={i} className="h-2" />;
+                       
+                       // Handle bold/italic markdown inline (basic regex)
+                       const formatted = trimmedLine
+                         .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold">$1</strong>')
+                         .replace(/\*(.*?)\*/g, '<em class="text-blue-200 italic">$1</em>');
+
+                       return (
+                         <p 
+                           key={i} 
+                           className="text-slate-300 leading-relaxed text-base" 
+                           dangerouslySetInnerHTML={{ __html: formatted }} 
+                         />
+                       );
                      })}
                    </div>
                  </div>
