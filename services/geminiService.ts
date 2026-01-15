@@ -7,14 +7,15 @@ const SYSTEM_INSTRUCTION = `You are MedGemma, a state-of-the-art clinical decisi
 Follow these rules:
 1. Use standard medical terminology (e.g., ICD-10 aligned).
 2. Maintain a professional, objective tone.
-3. Prioritize patient safety by flagging concerning findings immediately.
-4. All outputs must include a disclaimer that this is for clinical decision support, not a primary diagnosis.
-5. In layman mode, explain complex pathophysiology using simple analogies.`;
+3. Prioritize patient safety by flagging concerning findings immediately with ⚠️.
+4. Use Markdown for all text outputs. Structure reports with clear headers (##, ###), bullet points, and medical icons.
+5. All outputs must include a footer disclaimer that this is for clinical decision support, not a primary diagnosis.
+6. In layman mode, explain complex pathophysiology using simple analogies.`;
 
 export const analyzeRadiologyImage = async (base64Image: string, modality: string, bodyPart: string) => {
   const ai = getAI();
   const prompt = `Perform a detailed radiological analysis of this ${modality} of the ${bodyPart}. 
-  Provide structured findings and a definitive impression.`;
+  Provide structured findings and a definitive impression using Markdown. Use 🔬 for findings and 🩺 for impressions.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
     model: 'gemini-3-pro-preview',
@@ -47,9 +48,24 @@ export const analyzeRadiologyImage = async (base64Image: string, modality: strin
 
 export const performGlobalSearch = async (query: string, patientContext: any) => {
   const ai = getAI();
-  const prompt = `As MedGemma, synthesize an answer for: "${query}" 
-  based on the current patient context: ${JSON.stringify(patientContext)}. 
-  If the information is not in the context, use your medical knowledge to explain general principles while noting the lack of specific data.`;
+  const prompt = `As MedGemma, synthesize a high-fidelity Clinical Synthesis Report for the query: "${query}".
+  
+  Format the report as follows:
+  # 📋 Clinical Synthesis Report
+  
+  ## 🩺 Executive Summary
+  (One paragraph summary)
+  
+  ## 🔬 Relevant Findings & Evidence
+  (Bullet points with dates if available)
+  
+  ## ⚠️ Risk Assessment & Safety Flags
+  (Identify potential flags or contraindications)
+  
+  ## 📋 Clinical Recommendations
+  (Next steps and suggested monitoring)
+
+  Context: ${JSON.stringify(patientContext)}`;
 
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
@@ -60,15 +76,14 @@ export const performGlobalSearch = async (query: string, patientContext: any) =>
   return response.text;
 };
 
-// Fix: Added queryClinicalDocs to resolve the import error in DocumentsModule.tsx
 export const queryClinicalDocs = async (docs: string[], query: string) => {
   const ai = getAI();
-  const prompt = `Based on the following clinical documents, answer this query: "${query}"
+  const prompt = `Based on the following clinical documents, provide a structured Markdown summary answering: "${query}"
   
-  DOCUMENTS:
-  ${docs.join('\n---\n')}
-  
-  Provide a concise, evidence-based synthesis of the patient's records.`;
+  Structure with headers:
+  ### 📄 Document Review
+  ### 💡 Analysis
+  ### 📍 Conclusion`;
 
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
@@ -81,10 +96,9 @@ export const queryClinicalDocs = async (docs: string[], query: string) => {
 
 export const analyzeDermImage = async (base64Image: string, symptoms: string, duration: string) => {
   const ai = getAI();
-  const prompt = `Evaluate this dermatological lesion. History: ${symptoms}. Duration: ${duration}.
-  Provide differential diagnoses and a risk-stratified triage plan.`;
+  const prompt = `Evaluate this dermatological lesion. Provide a structured SOAP note in Markdown.`;
 
-  const response = await ai.models.generateContent({
+  const response: GenerateContentResponse = await ai.models.generateContent({
     model: 'gemini-3-pro-preview',
     contents: {
       parts: [
