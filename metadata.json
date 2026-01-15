@@ -1,0 +1,7 @@
+{
+  "name": "GemmaVue Clinical Intelligence",
+  "description": "Local-first clinical intelligence tool for radiology second opinions, document omnisearch, and dermatology triage using advanced multimodal AI.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
