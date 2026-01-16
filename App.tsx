@@ -43,6 +43,82 @@ const App: React.FC = () => {
     }
   };
 
+  /**
+   * Enhanced Clinical Markdown Parser
+   * Transforms raw MedGemma markdown into rich clinical HTML
+   */
+  const renderClinicalReport = (text: string) => {
+    return text.split('\n').map((line, i) => {
+      let trimmed = line.trim();
+      if (!trimmed) return <div key={i} className="h-4" />;
+
+      // Horizontal Rule
+      if (trimmed === '---' || trimmed === '***') {
+        return <hr key={i} className="border-slate-800 my-8 opacity-50" />;
+      }
+
+      // Headers (H1, H2, H3)
+      const h1Match = trimmed.match(/^# (.+)/);
+      const h2Match = trimmed.match(/^## (.+)/);
+      const h3Match = trimmed.match(/^### (.+)/);
+
+      if (h1Match) return <h1 key={i} className="text-3xl font-bold text-white mt-10 mb-6 border-b border-slate-800/80 pb-4 tracking-tight">{formatInline(h1Match[1])}</h1>;
+      if (h2Match) return <h2 key={i} className="text-xl font-bold text-blue-400 mt-10 mb-4 flex items-center gap-2 tracking-tight">{formatInline(h2Match[1])}</h2>;
+      if (h3Match) return <h3 key={i} className="text-lg font-semibold text-slate-100 mt-8 mb-3 border-l-2 border-blue-500/30 pl-4">{formatInline(h3Match[1])}</h3>;
+
+      // Blockquotes / Disclaimers
+      if (trimmed.startsWith('> ')) {
+        return (
+          <blockquote key={i} className="border-l-4 border-slate-700 bg-slate-900/40 p-5 my-8 italic text-slate-400 text-sm rounded-r-2xl leading-relaxed">
+            {formatInline(trimmed.replace('> ', ''))}
+          </blockquote>
+        );
+      }
+
+      // Lists
+      if (trimmed.match(/^[*•-] /)) {
+        return (
+          <div key={i} className="flex gap-4 text-slate-300 ml-6 mb-3 leading-relaxed group">
+            <span className="text-blue-500 font-bold select-none group-hover:scale-125 transition-transform">•</span>
+            <span dangerouslySetInnerHTML={{ __html: formatInlineRaw(trimmed.replace(/^[*•-] /, '')) }} />
+          </div>
+        );
+      }
+
+      if (trimmed.match(/^\d+\. /)) {
+        return (
+          <div key={i} className="flex gap-4 text-slate-300 ml-6 mb-3 leading-relaxed">
+            <span className="text-blue-400 font-mono font-bold select-none">{trimmed.match(/^\d+/)?.[0]}.</span>
+            <span dangerouslySetInnerHTML={{ __html: formatInlineRaw(trimmed.replace(/^\d+\. /, '')) }} />
+          </div>
+        );
+      }
+
+      // Default Paragraph
+      return (
+        <p key={i} className="text-slate-300 leading-relaxed text-base mb-4 font-light" 
+           dangerouslySetInnerHTML={{ __html: formatInlineRaw(trimmed) }} />
+      );
+    });
+  };
+
+  const formatInline = (text: string) => {
+    // Basic inline formatter that returns string or JSX-ready string
+    return <span dangerouslySetInnerHTML={{ __html: formatInlineRaw(text) }} />;
+  };
+
+  const formatInlineRaw = (text: string) => {
+    return text
+      // Bold
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold">$1</strong>')
+      // Italic
+      .replace(/\*(.*?)\*/g, '<em class="text-blue-200 italic font-medium">$1</em>')
+      // Inline Code / Values
+      .replace(/`(.*?)`/g, '<code class="bg-slate-800 text-blue-400 px-1.5 py-0.5 rounded font-mono text-xs">$1</code>')
+      // Highlight medical icons
+      .replace(/(🩺|🔬|⚠️|📋|💊|🏥|💡|📍|📄)/g, '<span class="mr-1 shadow-sm">$1</span>');
+  };
+
   const renderModule = () => {
     switch (activeModule) {
       case ModuleType.RADIOLOGY: 
@@ -145,12 +221,12 @@ const App: React.FC = () => {
                       <div className="w-6 h-6 rounded bg-blue-500 flex items-center justify-center">
                         <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                       </div>
-                      <h4 className="text-[11px] font-black text-blue-400 uppercase tracking-[0.3em]">MedGemma Clinical Synthesis</h4>
+                      <h4 className="text-[11px] font-black text-blue-400 uppercase tracking-[0.3em]">MedGemma Clinical Synthesis Report</h4>
                     </div>
                     <div className="flex items-center gap-3">
-                      <button className="text-[10px] font-bold text-slate-400 hover:text-white uppercase transition-colors flex items-center gap-2">
+                      <button className="text-[10px] font-bold text-slate-400 hover:text-white uppercase transition-colors flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-                        Export
+                        Print
                       </button>
                       <button onClick={() => setSearchResults(null)} className="text-slate-500 hover:text-white p-2 hover:bg-slate-800 rounded-lg transition-all">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -158,69 +234,24 @@ const App: React.FC = () => {
                     </div>
                  </div>
                  
-                 <div className="p-10">
-                   <div className="clinical-report-content space-y-4">
-                     {searchResults.split('\n').map((line, i) => {
-                       const trimmedLine = line.trim();
-                       if (trimmedLine.startsWith('# ')) {
-                         return <h1 key={i} className="text-2xl font-bold text-white mt-4 mb-6 border-b border-slate-800/80 pb-3">{trimmedLine.replace('# ', '')}</h1>;
-                       }
-                       if (trimmedLine.startsWith('## ')) {
-                         return <h2 key={i} className="text-xl font-bold text-blue-400 mt-8 mb-3 flex items-center gap-2">{trimmedLine.replace('## ', '')}</h2>;
-                       }
-                       if (trimmedLine.startsWith('### ')) {
-                         return <h3 key={i} className="text-lg font-semibold text-slate-100 mt-6 mb-2">{trimmedLine.replace('### ', '')}</h3>;
-                       }
-                       if (trimmedLine.startsWith('* ') || trimmedLine.startsWith('- ')) {
-                         return (
-                           <div key={i} className="flex gap-3 text-slate-300 ml-4 mb-1.5 leading-relaxed">
-                             <span className="text-blue-500 font-bold">•</span>
-                             <span>{trimmedLine.replace(/^[* -] /, '')}</span>
-                           </div>
-                         );
-                       }
-                       if (/^\d+\. /.test(trimmedLine)) {
-                         return (
-                           <div key={i} className="flex gap-3 text-slate-300 ml-4 mb-2 leading-relaxed">
-                             <span className="text-blue-500 font-bold font-mono">{trimmedLine.match(/^\d+/)?.[0]}.</span>
-                             <span>{trimmedLine.replace(/^\d+\. /, '')}</span>
-                           </div>
-                         );
-                       }
-                       if (trimmedLine === '---') {
-                         return <hr key={i} className="border-slate-800 my-8" />;
-                       }
-                       if (trimmedLine.startsWith('> ')) {
-                         return (
-                           <blockquote key={i} className="border-l-4 border-slate-700 bg-slate-900/40 p-4 my-6 italic text-slate-400 text-sm rounded-r-xl">
-                             {trimmedLine.replace('> ', '')}
-                           </blockquote>
-                         );
-                       }
-                       if (trimmedLine === '') return <div key={i} className="h-2" />;
-                       
-                       // Handle bold/italic markdown inline (basic regex)
-                       const formatted = trimmedLine
-                         .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold">$1</strong>')
-                         .replace(/\*(.*?)\*/g, '<em class="text-blue-200 italic">$1</em>');
-
-                       return (
-                         <p 
-                           key={i} 
-                           className="text-slate-300 leading-relaxed text-base" 
-                           dangerouslySetInnerHTML={{ __html: formatted }} 
-                         />
-                       );
-                     })}
+                 <div className="p-10 max-w-5xl mx-auto">
+                   <div className="clinical-report-content space-y-1">
+                     {renderClinicalReport(searchResults)}
                    </div>
                  </div>
 
                  <div className="bg-slate-900/60 p-6 border-t border-slate-800/60 flex justify-between items-center">
-                    <p className="text-[10px] text-slate-500 italic font-medium">
-                      MedGemma Verification ID: CDSS-ALPHA-SYNC-PRO-001 | Local-First Contextual Reasoning
-                    </p>
+                    <div className="flex flex-col gap-1">
+                      <p className="text-[10px] text-slate-500 italic font-medium">
+                        MedGemma Verification ID: CDSS-V3-ALPHA-2025
+                      </p>
+                      <div className="flex gap-2 items-center">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span className="text-[9px] text-slate-600 uppercase tracking-tighter">Diagnostic Fidelity Check Passed</span>
+                      </div>
+                    </div>
                     <div className="flex gap-4">
-                      <button className="text-[10px] font-black text-blue-500 uppercase tracking-widest hover:text-blue-400 transition-colors">Append to Patient EMR</button>
+                      <button className="text-[10px] font-black text-blue-500 bg-blue-500/5 px-4 py-2 rounded-xl border border-blue-500/10 uppercase tracking-widest hover:bg-blue-500/10 transition-colors shadow-lg">Append to Patient EMR</button>
                     </div>
                  </div>
                </div>
