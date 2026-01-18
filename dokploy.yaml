@@ -10,7 +10,14 @@ services:
     container_name: gemmavue-surrealdb
     restart: unless-stopped
     # Explicitly bind to 0.0.0.0:8080 to ensure external visibility
-    command: start --log info --user ${SURREAL_USER} --pass ${SURREAL_PASS} --bind 0.0.0.0:8080 file://data/database.db
+    command: >-
+      start
+      --log info
+      --user ${SURREAL_USER}
+      --pass ${SURREAL_PASS}
+      --bind 0.0.0.0:8080
+      --allow-all
+      file://data/database.db
     environment:
       - SURREAL_USER=${SURREAL_USER:-root}
       - SURREAL_PASS=${SURREAL_PASS:-root}
