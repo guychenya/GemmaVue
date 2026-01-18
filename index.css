@@ -1,28 +1,56 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  body {
-    @apply bg-canvas text-slate-200 antialiased selection:bg-primary selection:text-white;
-  }
+@theme {
+  --color-canvas: #09090b;
+  --color-card: #121214;
+  --color-sidebar: #0a0a0c;
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
 @layer components {
   .glass-panel {
-    @apply bg-card backdrop-blur-md border border-slate-700/50 shadow-glass;
+    @apply bg-card backdrop-blur-md border border-white/5 shadow-glass;
   }
-  
+
   .btn-primary {
-    @apply bg-primary hover:bg-primary-hover text-white font-medium px-4 py-2 rounded-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-primary text-white font-medium px-4 py-2 rounded-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-primary-hover);
   }
 
   .nav-item {
     @apply flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer;
   }
-  
+
   .nav-item.active {
     @apply bg-primary/10 text-primary border-r-2 border-primary;
+  }
+
+  /* Custom Scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #333 transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #333;
+    border-radius: 20px;
   }
 
   .input-field {
