@@ -1,0 +1,38 @@
+services:
+  # SurrealDB Database
+  surrealdb:
+    image: surrealdb/surrealdb:latest
+    container_name: gemmavue-surrealdb
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    command: start --log info --user ${SURREAL_USER:-root} --pass ${SURREAL_PASS:-changeme} file://data/database.db
+    volumes:
+      - surreal-data:/data
+    environment:
+      - SURREAL_USER=${SURREAL_USER:-root}
+      - SURREAL_PASS=${SURREAL_PASS:-changeme}
+
+  # Surrealist UI (Database Admin Panel)
+  surrealist:
+    image: surrealdb/surrealist:latest
+    container_name: gemmavue-surrealist
+    restart: unless-stopped
+    ports:
+      - "8001:80"
+    depends_on:
+      - surrealdb
+  # GemmaVue Frontend (optional - can deploy separately)
+  # frontend:
+  #   build:
+  #     context: .
+  #     args:
+  #       - VITE_API_KEY=${VITE_API_KEY}
+  #       - VITE_SURREAL_URL=http://surrealdb:8000/rpc
+  #   ports:
+  #     - "3000:80"
+  #   depends_on:
+  #     - surrealdb
+
+volumes:
+  surreal-data:

@@ -12,7 +12,7 @@ const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<string | null>(null);
-  
+
   const [activePatient] = useState<PatientProfile>({
     id: 'P123',
     name: 'Alexander Thompson',
@@ -46,13 +46,13 @@ const App: React.FC = () => {
       let trimmed = line.trim();
       if (!trimmed) return <div key={i} className="h-4" />;
       if (trimmed === '---' || trimmed === '***') return <hr key={i} className="border-slate-800 my-6" />;
-      
+
       const hMatch = trimmed.match(/^(#{1,3}) (.+)/);
       if (hMatch) {
         const level = hMatch[1].length;
-        const classes = level === 1 ? "text-2xl font-bold text-white mb-4 border-b border-slate-800 pb-2" : 
-                        level === 2 ? "text-lg font-bold text-blue-400 mt-6 mb-2" : 
-                        "text-base font-semibold text-slate-200 mt-4 mb-1";
+        const classes = level === 1 ? "text-2xl font-bold text-white mb-4 border-b border-slate-800 pb-2" :
+          level === 2 ? "text-lg font-bold text-blue-400 mt-6 mb-2" :
+            "text-base font-semibold text-slate-200 mt-4 mb-1";
         return <div key={i} className={classes} dangerouslySetInnerHTML={{ __html: formatInlineRaw(hMatch[2]) }} />;
       }
 
@@ -90,7 +90,7 @@ const App: React.FC = () => {
         <div className="glass p-6 rounded-[32px] border-slate-800/50 space-y-4">
           <div className="flex justify-between items-start">
             <div className="w-10 h-10 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500">
-               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
             </div>
             <span className="text-[10px] font-black text-slate-600 uppercase">Profile</span>
           </div>
@@ -124,7 +124,7 @@ const App: React.FC = () => {
             { id: ModuleType.DOCUMENTS, title: 'Document Omnisearch', desc: 'Cross-reference lab results and clinic notes.', icon: '📄' },
             { id: ModuleType.DERMVUE, title: 'Dermatological Triage', desc: 'Lesion analysis and risk assessment.', icon: '🩺' }
           ].map((item) => (
-            <button 
+            <button
               key={item.id}
               onClick={() => setActiveModule(item.id)}
               className="p-8 bg-slate-900/40 border border-slate-800 rounded-[32px] text-left hover:border-blue-500/50 hover:bg-slate-900/60 transition-all group"
@@ -142,18 +142,18 @@ const App: React.FC = () => {
   return (
     <div className="flex h-screen bg-slate-950 text-slate-200 font-sans overflow-hidden">
       <Sidebar activeModule={activeModule} setActiveModule={setActiveModule} activePatient={activePatient} />
-      
+
       <div className="flex-1 flex flex-col min-w-0 bg-slate-950 relative">
         <header className="h-16 flex-none flex items-center justify-between px-8 border-b border-slate-900 bg-slate-950/50 backdrop-blur-xl z-30">
           <form onSubmit={handleQuickSearch} className="flex-1 max-w-xl relative">
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Query patient history or clinical data..."
               className="w-full bg-slate-900/50 border border-slate-800 rounded-full py-2 pl-10 pr-4 text-xs focus:ring-1 focus:ring-blue-500/50 outline-none transition-all placeholder:text-slate-600"
             />
-            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             {isSearching && <div className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>}
           </form>
 
@@ -171,11 +171,11 @@ const App: React.FC = () => {
         <main className="flex-1 overflow-y-auto relative bg-slate-950">
           <div className="w-full h-full">
             {activeModule === ModuleType.DASHBOARD && renderDashboard()}
-            {activeModule === ModuleType.RADIOLOGY && <RadiologyModule onStudyAdded={(s) => setStudies([...studies, s])} initialStudy={studies[studies.length-1]} />}
+            {activeModule === ModuleType.RADIOLOGY && <RadiologyModule onStudyAdded={(s) => setStudies([...studies, s])} initialStudy={studies[studies.length - 1]} patientId={activePatient.id} />}
             {activeModule === ModuleType.DOCUMENTS && <DocumentsModule />}
-            {activeModule === ModuleType.DERMVUE && <DermVueModule onCaseAdded={(c) => setDermCases([...dermCases, c])} />}
+            {activeModule === ModuleType.DERMVUE && <DermVueModule onCaseAdded={(c) => setDermCases([...dermCases, c])} patientId={activePatient.id} />}
             {activeModule === ModuleType.SETTINGS && (
-               <div className="p-10 text-center text-slate-500 text-sm">System configuration active. MedGemma engine v3.1.0</div>
+              <div className="p-10 text-center text-slate-500 text-sm">System configuration active. MedGemma engine v3.1.0</div>
             )}
           </div>
         </main>
@@ -186,14 +186,14 @@ const App: React.FC = () => {
               <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
                 <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">MedGemma Clinical Synthesis</span>
                 <button onClick={() => setSearchResults(null)} className="p-1 hover:bg-slate-800 rounded-md transition-colors">
-                  <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                  <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
               <div className="p-10 overflow-y-auto">
                 {renderClinicalReport(searchResults)}
               </div>
               <div className="p-4 bg-slate-900/50 border-t border-slate-800 flex justify-end">
-                 <button onClick={() => setSearchResults(null)} className="px-6 py-2 bg-blue-600 text-white text-[10px] font-bold uppercase rounded-xl hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20">Acknowledge</button>
+                <button onClick={() => setSearchResults(null)} className="px-6 py-2 bg-blue-600 text-white text-[10px] font-bold uppercase rounded-xl hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20">Acknowledge</button>
               </div>
             </div>
           </div>

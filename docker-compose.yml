@@ -1,0 +1,9 @@
+services:
+  surrealdb:
+    image: surrealdb/surrealdb:latest
+    container_name: gemmavue-surrealdb
+    ports:
+      - "8002:8000"
+    command: start --log trace --user root --pass root file://data/database.db
+    volumes:
+      - ./surreal-data:/data

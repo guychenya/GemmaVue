@@ -6,9 +6,10 @@ import { RadiologyStudy } from '../types';
 interface RadiologyModuleProps {
   onStudyAdded: (study: RadiologyStudy) => void;
   initialStudy?: RadiologyStudy;
+  patientId: string;
 }
 
-const RadiologyModule: React.FC<RadiologyModuleProps> = ({ onStudyAdded, initialStudy }) => {
+const RadiologyModule: React.FC<RadiologyModuleProps> = ({ onStudyAdded, initialStudy, patientId }) => {
   const [loading, setLoading] = useState(false);
   const [currentStudy, setCurrentStudy] = useState<RadiologyStudy | null>(initialStudy || null);
 
@@ -20,10 +21,10 @@ const RadiologyModule: React.FC<RadiologyModuleProps> = ({ onStudyAdded, initial
     reader.onloadend = async () => {
       const base64 = reader.result as string;
       try {
-        const result = await analyzeRadiologyImage(base64, 'Radiology', 'Chest');
+        const result = await analyzeRadiologyImage(base64, 'Radiology', 'Chest', patientId);
         const newStudy: RadiologyStudy = {
           id: `RAD-${Date.now()}`,
-          patientId: 'P123',
+          patientId: patientId,
           modality: 'XR',
           bodyPart: 'Chest',
           date: new Date().toLocaleDateString(),
@@ -52,13 +53,13 @@ const RadiologyModule: React.FC<RadiologyModuleProps> = ({ onStudyAdded, initial
       let trimmed = line.trim();
       if (!trimmed) return <div key={i} className="h-4" />;
       if (trimmed === '---' || trimmed === '***') return <hr key={i} className="border-slate-800 my-6" />;
-      
+
       const hMatch = trimmed.match(/^(#{1,3}) (.+)/);
       if (hMatch) {
         const level = hMatch[1].length;
-        const classes = level === 1 ? "text-xl font-bold text-white mb-4 border-b border-slate-800 pb-2 flex items-center gap-2" : 
-                        level === 2 ? "text-lg font-bold text-blue-400 mt-6 mb-2 flex items-center gap-2" : 
-                        "text-base font-semibold text-slate-200 mt-4 mb-1 flex items-center gap-2";
+        const classes = level === 1 ? "text-xl font-bold text-white mb-4 border-b border-slate-800 pb-2 flex items-center gap-2" :
+          level === 2 ? "text-lg font-bold text-blue-400 mt-6 mb-2 flex items-center gap-2" :
+            "text-base font-semibold text-slate-200 mt-4 mb-1 flex items-center gap-2";
         return <div key={i} className={classes} dangerouslySetInnerHTML={{ __html: formatInlineRaw(hMatch[2]) }} />;
       }
 
@@ -95,7 +96,7 @@ const RadiologyModule: React.FC<RadiologyModuleProps> = ({ onStudyAdded, initial
       <div className="p-12 flex flex-col items-center justify-center min-h-[500px]">
         <label className="w-full max-w-xl aspect-[16/9] bg-slate-900/20 border-2 border-dashed border-slate-800 rounded-[32px] flex flex-col items-center justify-center cursor-pointer hover:border-blue-500/50 hover:bg-blue-500/5 transition-all group">
           <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-xl border border-slate-800">
-            <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+            <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
           </div>
           <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Upload Radiological Data</span>
           <span className="text-[10px] text-slate-600 mt-2">Supports XR, CT, MRI Formats</span>
@@ -111,8 +112,8 @@ const RadiologyModule: React.FC<RadiologyModuleProps> = ({ onStudyAdded, initial
         <div className="flex justify-between items-center border-b border-slate-900 pb-4">
           <h2 className="text-lg font-bold text-white tracking-tight">Active Scan</h2>
           <div className="flex gap-2">
-             <span className="px-2 py-0.5 bg-blue-500/10 text-blue-400 text-[9px] font-black rounded border border-blue-500/20 uppercase tracking-tighter">{currentStudy.modality}</span>
-             <span className="px-2 py-0.5 bg-slate-800 text-slate-400 text-[9px] font-black rounded uppercase tracking-tighter">{currentStudy.date}</span>
+            <span className="px-2 py-0.5 bg-blue-500/10 text-blue-400 text-[9px] font-black rounded border border-blue-500/20 uppercase tracking-tighter">{currentStudy.modality}</span>
+            <span className="px-2 py-0.5 bg-slate-800 text-slate-400 text-[9px] font-black rounded uppercase tracking-tighter">{currentStudy.date}</span>
           </div>
         </div>
         <div className="bg-black rounded-[40px] overflow-hidden aspect-square border border-slate-800 shadow-2xl flex items-center justify-center p-2">
@@ -124,18 +125,18 @@ const RadiologyModule: React.FC<RadiologyModuleProps> = ({ onStudyAdded, initial
           ))}
         </div>
       </div>
-      
+
       <div className="flex flex-col h-full">
         <div className="flex-1 glass rounded-[40px] p-10 border-slate-800/60 shadow-2xl overflow-y-auto">
           <div className="clinical-findings-render">
             {renderClinicalMarkdown(currentStudy.report || '')}
           </div>
-          
+
           <div className="mt-12 pt-6 border-t border-slate-900">
-             <div className="flex items-center gap-3 p-4 bg-slate-900/40 rounded-2xl border border-slate-800/60 italic text-[11px] text-slate-500 leading-relaxed">
-                <span className="text-blue-500">ℹ️</span>
-                This report was synthesized via multimodal clinical reasoning and serves as primary screening support. Verify findings with comparative DICOM history.
-             </div>
+            <div className="flex items-center gap-3 p-4 bg-slate-900/40 rounded-2xl border border-slate-800/60 italic text-[11px] text-slate-500 leading-relaxed">
+              <span className="text-blue-500">ℹ️</span>
+              This report was synthesized via multimodal clinical reasoning and serves as primary screening support. Verify findings with comparative DICOM history.
+            </div>
           </div>
         </div>
       </div>

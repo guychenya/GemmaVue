@@ -11,7 +11,8 @@
   "dependencies": {
     "@google/genai": "^1.36.0",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "surrealdb.js": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

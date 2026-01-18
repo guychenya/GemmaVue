@@ -2,7 +2,7 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { saveDiagnosticResult } from "./databaseService";
 
-const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
+const getAI = () => new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY || '' });
 
 const SYSTEM_INSTRUCTION = `You are MedGemma, a state-of-the-art clinical decision support AI. 
 Follow these rules:
@@ -13,13 +13,13 @@ Follow these rules:
 5. All outputs must include a footer disclaimer that this is for clinical decision support, not a primary diagnosis.
 6. Use **bold** for clinical terms and *italic* for values.`;
 
-export const analyzeRadiologyImage = async (base64Image: string, modality: string, bodyPart: string) => {
+export const analyzeRadiologyImage = async (base64Image: string, modality: string, bodyPart: string, patientId: string) => {
   const ai = getAI();
   const prompt = `Perform a detailed radiological analysis of this ${modality} of the ${bodyPart}. 
   Provide structured findings and a definitive impression using Markdown headers and bullet points. Use 🔬 for findings and 🩺 for impressions.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: 'gemini-3-pro-preview',
+    model: 'gemini-1.5-pro',
     contents: {
       parts: [
         { inlineData: { data: base64Image.split(',')[1], mimeType: 'image/png' } },
@@ -45,9 +45,10 @@ export const analyzeRadiologyImage = async (base64Image: string, modality: strin
   });
 
   const parsed = JSON.parse(response.text || '{}');
-  
+
   // Persist to SurrealDB
   await saveDiagnosticResult('radiology', {
+    patient: patientId,
     modality,
     body_part: bodyPart,
     report: parsed.findings + "\n" + parsed.impression,
@@ -89,7 +90,7 @@ export const performGlobalSearch = async (query: string, patientContext: any) =>
   Context: ${JSON.stringify(patientContext)}`;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
+    model: 'gemini-1.5-flash',
     contents: prompt,
     config: { systemInstruction: SYSTEM_INSTRUCTION }
   });
@@ -107,7 +108,7 @@ export const queryClinicalDocs = async (docs: string[], query: string) => {
   ### 📍 Conclusion`;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
+    model: 'gemini-1.5-flash',
     contents: prompt,
     config: { systemInstruction: SYSTEM_INSTRUCTION }
   });
@@ -115,12 +116,12 @@ export const queryClinicalDocs = async (docs: string[], query: string) => {
   return response.text;
 };
 
-export const analyzeDermImage = async (base64Image: string, symptoms: string, duration: string) => {
+export const analyzeDermImage = async (base64Image: string, symptoms: string, duration: string, patientId: string) => {
   const ai = getAI();
   const prompt = `Evaluate this dermatological lesion. Provide a structured SOAP note in Markdown using # for Subjective, Objective, Assessment, and Plan.`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: 'gemini-3-pro-preview',
+    model: 'gemini-1.5-pro',
     contents: {
       parts: [
         { inlineData: { data: base64Image.split(',')[1], mimeType: 'image/png' } },
@@ -148,6 +149,7 @@ export const analyzeDermImage = async (base64Image: string, symptoms: string, du
 
   // Persist to SurrealDB
   await saveDiagnosticResult('dermatology', {
+    patient: patientId,
     assessment: parsed.assessment,
     risk_tier: parsed.riskTier,
     soap_note: parsed.soapNote,
