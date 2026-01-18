@@ -22,7 +22,7 @@ services:
       - "traefik.http.routers.gemmavue-db.rule=Host(`db.gemmavue.xyz`)"
       - "traefik.http.routers.gemmavue-db.entrypoints=websecure"
       - "traefik.http.routers.gemmavue-db.tls.certresolver=letsencrypt"
-      - "traefik.http.services.gemmavue-db.loadbalancer.server.port=8000"
+      # - "traefik.http.services.gemmavue-db.loadbalancer.server.port=8000"
 
   # ==========================================
   # 2. Surrealist UI (Admin Panel)
