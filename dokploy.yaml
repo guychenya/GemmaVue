@@ -5,34 +5,10 @@ services:
   # 1. SurrealDB Database
   # Accessed via https://db.gemmavue.xyz
   # ==========================================
-  surrealdb:
-    image: surrealdb/surrealdb:latest
-    container_name: gemmavue-surrealdb
-    restart: unless-stopped
-    # Revert to standard port 8000 but keep CORS allowed
-    command: >-
-      start
-      --log info
-      --user ${SURREAL_USER}
-      --pass ${SURREAL_PASS}
-      --bind 0.0.0.0:8000
-      --allow-all
-      file://data/database.db
-    environment:
-      - SURREAL_USER=${SURREAL_USER:-root}
-      - SURREAL_PASS=${SURREAL_PASS:-root}
-    volumes:
-      - surreal-data:/data
-    networks:
-      - dokploy-network
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.gemmavue-db-router.rule=Host(`db.gemmavue.xyz`)"
-      - "traefik.http.routers.gemmavue-db-router.entrypoints=websecure"
-      - "traefik.http.routers.gemmavue-db-router.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.gemmavue-db-router.service=gemmavue-db-service"
-      - "traefik.http.services.gemmavue-db-service.loadbalancer.server.port=8000"
-      - "traefik.docker.network=dokploy-network"
+# Database disabled in Compose - Deploying as Dokploy Application for better reliability
+#  surrealdb:
+#    image: surrealdb/surrealdb:latest
+# ... (removed)
 
   # ==========================================
   # 2. Surrealist UI (Admin Panel)
