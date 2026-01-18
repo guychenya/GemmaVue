@@ -1,0 +1,43 @@
+
+# ==========================================
+# 1. GemmaVue Frontend (Deploy in 'Applications' Tab)
+# ==========================================
+
+# 1. Create New Application
+# Name: gemmavue-app
+# Provider: GitHub
+# Repo: guychenya/GemmaVue
+# Branch: main
+# Build Type: Dockerfile
+
+# 2. Environment Variables (Copy & Paste these)
+VITE_SURREAL_URL=https://db.gemmavue.xyz/rpc
+VITE_SURREAL_NS=gemmavue
+VITE_SURREAL_DB=clinical
+VITE_SURREAL_USER=root
+VITE_SURREAL_PASS=GemmaVueSecret2025!
+VITE_API_KEY=your_actual_gemini_api_key_here
+
+# Notes:
+# - Replace 'GemmaVueSecret2025!' with the password you choose for the DB.
+# - Replace 'your_actual_gemini_api_key_here' with your real key.
+
+# 3. Domain
+# URL: gemmavue.xyz
+# Port: 80
+
+
+# ==========================================
+# 2. Database & UI (Deploy in 'Compose' Tab)
+# ==========================================
+
+# 1. Create New Compose Service
+# Name: gemmavue-db
+# Copy content from 'dokploy.yaml' in the repo.
+
+# 2. Environment Variables
+SURREAL_USER=root
+SURREAL_PASS=GemmaVueSecret2025!
+
+# Notes:
+# - This password MUST match the VITE_SURREAL_PASS above.
