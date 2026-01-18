@@ -32,6 +32,7 @@ services:
       - "traefik.http.routers.gemmavue-db-router.tls.certresolver=letsencrypt"
       - "traefik.http.routers.gemmavue-db-router.service=gemmavue-db-service"
       - "traefik.http.services.gemmavue-db-service.loadbalancer.server.port=8000"
+      - "traefik.docker.network=dokploy-network"
 
   # ==========================================
   # 2. Surrealist UI (Admin Panel)
