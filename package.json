@@ -6,13 +6,14 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "db:init": "node init-db.js"
   },
   "dependencies": {
     "@google/genai": "^1.36.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "surrealdb.js": "^1.0.0"
+    "surrealdb": "^1.3.2"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

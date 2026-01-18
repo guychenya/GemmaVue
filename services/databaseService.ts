@@ -1,4 +1,4 @@
-import Surreal from 'surrealdb.js';
+import Surreal from 'surrealdb';
 
 /**
  * SurrealDB Service Layer for Self-Hosting with Dokploy
@@ -27,13 +27,11 @@ const connect = async () => {
 
     try {
         console.log(`[Database] Connecting to ${ENDPOINT}...`);
-        await db.connect(ENDPOINT, {
-            namespace: NAMESPACE,
-            database: DATABASE,
-            auth: {
-                username: USERNAME,
-                password: PASSWORD,
-            }
+        await db.connect(ENDPOINT);
+        await db.use({ namespace: NAMESPACE, database: DATABASE });
+        await db.signin({
+            username: USERNAME,
+            password: PASSWORD,
         });
 
         isConnected = true;
