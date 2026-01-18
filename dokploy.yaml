@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # SurrealDB Database
+  # Accessed via https://db.gemmavue.xyz
+  surrealdb:
+    image: surrealdb/surrealdb:latest
+    container_name: gemmavue-surrealdb
+    restart: unless-stopped
+    command: start --log info --user ${SURREAL_USER} --pass ${SURREAL_PASS} file://data/database.db
+    environment:
+      - SURREAL_USER=${SURREAL_USER:-root}
+      - SURREAL_PASS=${SURREAL_PASS:-root}
+    volumes:
+      - surreal-data:/data
+    networks:
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gemmavue-db.rule=Host(`db.gemmavue.xyz`)"
+      - "traefik.http.routers.gemmavue-db.entrypoints=websecure"
+      - "traefik.http.routers.gemmavue-db.tls.certresolver=letsencrypt"
+      - "traefik.http.services.gemmavue-db.loadbalancer.server.port=8000"
+
+  # Surrealist UI (Admin Panel)
+  # Accessed via https://admin.gemmavue.xyz
+  surrealist:
+    image: surrealdb/surrealist:latest
+    container_name: gemmavue-surrealist
+    restart: unless-stopped
+    networks:
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gemmavue-admin.rule=Host(`admin.gemmavue.xyz`)"
+      - "traefik.http.routers.gemmavue-admin.entrypoints=websecure"
+      - "traefik.http.routers.gemmavue-admin.tls.certresolver=letsencrypt"
+      - "traefik.http.services.gemmavue-admin.loadbalancer.server.port=80"
+
+volumes:
+  surreal-data:
+
+networks:
+  dokploy-network:
+    external: true
