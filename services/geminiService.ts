@@ -1,5 +1,6 @@
 
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
+import { saveDiagnosticResult } from "./databaseService";
 
 const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -43,7 +44,18 @@ export const analyzeRadiologyImage = async (base64Image: string, modality: strin
     }
   });
 
-  return JSON.parse(response.text || '{}');
+  const parsed = JSON.parse(response.text || '{}');
+  
+  // Persist to SurrealDB
+  await saveDiagnosticResult('radiology', {
+    modality,
+    body_part: bodyPart,
+    report: parsed.findings + "\n" + parsed.impression,
+    tags: parsed.tags,
+    created_at: new Date()
+  });
+
+  return parsed;
 };
 
 export const performGlobalSearch = async (query: string, patientContext: any) => {
@@ -132,5 +144,15 @@ export const analyzeDermImage = async (base64Image: string, symptoms: string, du
     }
   });
 
-  return JSON.parse(response.text || '{}');
+  const parsed = JSON.parse(response.text || '{}');
+
+  // Persist to SurrealDB
+  await saveDiagnosticResult('dermatology', {
+    assessment: parsed.assessment,
+    risk_tier: parsed.riskTier,
+    soap_note: parsed.soapNote,
+    created_at: new Date()
+  });
+
+  return parsed;
 };

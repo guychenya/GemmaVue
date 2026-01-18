@@ -1,5 +1,6 @@
 
 export enum ModuleType {
+  DASHBOARD = 'DASHBOARD',
   RADIOLOGY = 'RADIOLOGY',
   DOCUMENTS = 'DOCUMENTS',
   DERMVUE = 'DERMVUE',
