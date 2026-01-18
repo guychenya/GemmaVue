@@ -30,6 +30,8 @@ services:
       - "traefik.http.routers.gemmavue-db.rule=Host(`db.gemmavue.xyz`)"
       - "traefik.http.routers.gemmavue-db.entrypoints=websecure"
       - "traefik.http.routers.gemmavue-db.tls.certresolver=letsencrypt"
+      # Explicitly link router to service
+      - "traefik.http.routers.gemmavue-db.service=gemmavue-db"
       # Explicitly pointing Traefik to port 8080
       - "traefik.http.services.gemmavue-db.loadbalancer.server.port=8080"
 
