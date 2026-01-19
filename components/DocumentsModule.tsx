@@ -8,7 +8,7 @@ const DocumentsModule: React.FC = () => {
   const [answer, setAnswer] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [docs] = useState<ClinicalDoc[]>([
-    { id: '1', type: 'Clinical Note', date: 'Oct 12, 2023', title: 'Consultation - Internal Medicine', content: 'Patient presents with fatigue and dyspnea. History of hypertension.' },
+    { id: '1', type: 'Clinic Note', date: 'Oct 12, 2023', title: 'Consultation - Internal Medicine', content: 'Patient presents with fatigue and dyspnea. History of hypertension.' },
     { id: '2', type: 'Pathology', date: 'Nov 05, 2023', title: 'Hematology Panel', content: 'HGB: 10.2 (Low), Ferritin: 15 (Low), MCV: 78 (Low).' },
     { id: '3', type: 'Radiology', date: 'Jan 20, 2024', title: 'Abdominal Ultrasound', content: 'Liver: Normal size and echogenicity. Gallbladder: No stones.' },
   ]);

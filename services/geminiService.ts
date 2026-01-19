@@ -91,7 +91,11 @@ export const performGlobalSearch = async (query: string, patientContext: any) =>
 
   const response = await ai.models.generateContent({
     model: 'gemini-1.5-flash',
-    contents: prompt,
+    contents: {
+      parts: [
+        { text: prompt }
+      ]
+    },
     config: { systemInstruction: SYSTEM_INSTRUCTION }
   });
 
@@ -102,6 +106,11 @@ export const queryClinicalDocs = async (docs: string[], query: string) => {
   const ai = getAI();
   const prompt = `Based on the following clinical documents, provide a structured Markdown summary answering: "${query}"
   
+  ---
+  Documents:
+  ${docs.map((d, i) => `[Doc ${i + 1}]: ${d}`).join('\n\n')}
+  ---
+  
   Structure with headers:
   # 📄 Document Review
   ## 💡 Analysis
@@ -109,7 +118,11 @@ export const queryClinicalDocs = async (docs: string[], query: string) => {
 
   const response = await ai.models.generateContent({
     model: 'gemini-1.5-flash',
-    contents: prompt,
+    contents: {
+      parts: [
+        { text: prompt }
+      ]
+    },
     config: { systemInstruction: SYSTEM_INSTRUCTION }
   });
 
