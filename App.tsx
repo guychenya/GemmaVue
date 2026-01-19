@@ -79,143 +79,149 @@ const App: React.FC = () => {
     .replace(/(🩺|🔬|⚠️|📋|💊|🏥|💡|📍|📄)/g, '<span class="mr-1 text-slate-400 inline-block scale-90">$1</span>');
 
   const renderDashboard = () => (
-    <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <header className="flex justify-between items-end border-b border-slate-800 pb-6">
+    <div className="p-8 max-w-7xl mx-auto space-y-12 animate-in fade-in duration-500">
+      <header className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-white tracking-tight">Clinical Workstation</h2>
-          <p className="text-slate-500 text-sm mt-1">MedGemma Intelligence Core v3.1 • System Online</p>
+          <h2 className="text-3xl font-light text-white tracking-tight">Good morning, Dr. Reviewer</h2>
+          <p className="text-slate-500 mt-2 font-light">Your clinical workstation is ready.</p>
         </div>
-        <div className="flex gap-3">
-          <div className="bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-xs font-mono text-emerald-500">DB: CONNECTED</span>
-          </div>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/50 border border-slate-800/50">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="text-[10px] uppercase tracking-widest text-slate-500">System Online</span>
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-card backdrop-blur-sm p-6 rounded-xl border border-slate-800 space-y-4 shadow-sm hover:border-slate-700 transition-colors">
-          <div className="flex justify-between items-start">
-            <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center text-primary border border-blue-500/20">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Patient Status - Hero Style */}
+        <div className="lg:col-span-2 relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+          <div className="relative bg-card rounded-2xl p-8 border border-slate-800/50 hover:border-slate-700/50 transition-all">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <span className="text-xs font-bold text-blue-500 uppercase tracking-widest mb-2 block">Active Patient</span>
+                <h3 className="text-4xl font-semibold text-white tracking-tight">{activePatient.name}</h3>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-mono text-slate-400">{activePatient.id}</div>
+                <div className="text-sm text-slate-500">{activePatient.gender}, {activePatient.age} Years</div>
+              </div>
             </div>
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Active Patient</span>
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-white">{activePatient.name}</h3>
-            <p className="text-xs text-slate-400 font-mono mt-1">ID: {activePatient.id} • {activePatient.age}Y • {activePatient.gender}</p>
-          </div>
-          <div className="pt-2">
-            <span className="inline-flex items-center px-2 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase rounded border border-emerald-500/20">No Contraindications</span>
+
+            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-800/50">
+              <div>
+                <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">Status</div>
+                <div className="text-emerald-400 font-medium">Stable</div>
+              </div>
+              <div>
+                <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">Last Visit</div>
+                <div className="text-slate-300">Oct 24, 2025</div>
+              </div>
+              <div>
+                <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">Insurance</div>
+                <div className="text-slate-300">BlueCross / H204</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="bg-card backdrop-blur-sm p-6 rounded-xl border border-slate-800 flex flex-col justify-between shadow-sm hover:border-slate-700 transition-colors group cursor-pointer" onClick={() => setActiveModule(ModuleType.RADIOLOGY)}>
-          <div className="flex justify-between items-start">
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Radiology</p>
-            <svg className="w-4 h-4 text-slate-600 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+        {/* Quick Stats / Actions */}
+        <div className="space-y-4">
+          <div onClick={() => setActiveModule(ModuleType.RADIOLOGY)} className="group cursor-pointer bg-card hover:bg-slate-800/50 p-6 rounded-2xl border border-slate-800/50 transition-all">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-xs text-slate-500 uppercase tracking-wider">Radiology</span>
+              <span className="text-slate-600 group-hover:text-blue-400 transition-colors">↗</span>
+            </div>
+            <div className="text-3xl font-light text-white">{studies.length} <span className="text-sm text-slate-500 ml-1">Studies</span></div>
           </div>
-          <div>
-            <div className="text-3xl font-bold text-white tracking-tight">{studies.length}</div>
-            <div className="text-xs text-slate-500 font-medium">Studies Available</div>
-          </div>
-        </div>
 
-        <div className="bg-card backdrop-blur-sm p-6 rounded-xl border border-slate-800 flex flex-col justify-between shadow-sm hover:border-slate-700 transition-colors group cursor-pointer" onClick={() => setActiveModule(ModuleType.DERMVUE)}>
-          <div className="flex justify-between items-start">
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Dermatology</p>
-            <svg className="w-4 h-4 text-slate-600 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-white tracking-tight">{dermCases.length}</div>
-            <div className="text-xs text-slate-500 font-medium">Cases Analyzed</div>
+          <div onClick={() => setActiveModule(ModuleType.DERMVUE)} className="group cursor-pointer bg-card hover:bg-slate-800/50 p-6 rounded-2xl border border-slate-800/50 transition-all">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-xs text-slate-500 uppercase tracking-wider">Dermatology</span>
+              <span className="text-slate-600 group-hover:text-blue-400 transition-colors">↗</span>
+            </div>
+            <div className="text-3xl font-light text-white">{dermCases.length} <span className="text-sm text-slate-500 ml-1">Cases</span></div>
           </div>
         </div>
       </div>
 
-      <section className="space-y-4 pt-4">
-        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">Diagnostic Tools</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            { id: ModuleType.RADIOLOGY, title: 'Radiology Analysis', desc: 'Auto-detection of pulmonary and skeletal pathologies.', icon: '🔬' },
-            { id: ModuleType.DOCUMENTS, title: 'Clinical Records', desc: 'Semantic search across patient history and labs.', icon: '📄' },
-            { id: ModuleType.DERMVUE, title: 'Dermatology Triage', desc: 'Vision-based lesion risk assessment.', icon: '🩺' }
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveModule(item.id)}
-              className="p-6 bg-slate-900/40 border border-slate-800 rounded-xl text-left hover:border-primary/50 hover:bg-slate-800/60 transition-all group"
-            >
-              <div className="flex items-center gap-4 mb-3">
-                <span className="text-2xl filter grayscale group-hover:grayscale-0 transition-all">{item.icon}</span>
-                <h4 className="text-sm font-bold text-slate-200 group-hover:text-white transition-colors">{item.title}</h4>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[
+          { id: ModuleType.RADIOLOGY, title: 'Radiology Analysis', desc: 'Pulmonary & skeletal pathology detection.', icon: 'M9 5l7 7-7 7' }, // Simple placeholder icon path usage
+          { id: ModuleType.DOCUMENTS, title: 'Clinical Records', desc: 'Semantic history & lab search.', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
+          { id: ModuleType.DERMVUE, title: 'Dermatology Triage', desc: 'Vision-based lesion assessment.', icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z' }
+        ].map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setActiveModule(item.id)}
+            className="group text-left p-6 rounded-2xl bg-slate-900/20 hover:bg-slate-900/40 border border-transparent hover:border-slate-800 transition-all"
+          >
+            <div className="flex items-center gap-4 mb-3">
+              <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:bg-blue-600 transition-all">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d={item.icon} /></svg>
               </div>
-              <p className="text-xs text-slate-500 leading-relaxed pl-[42px]">{item.desc}</p>
-            </button>
-          ))}
-        </div>
-      </section>
+              <h4 className="text-base font-medium text-slate-300 group-hover:text-white transition-colors">{item.title}</h4>
+            </div>
+            <p className="text-sm text-slate-500 pl-[56px] font-light">{item.desc}</p>
+          </button>
+        ))}
+      </div>
     </div>
   );
 
   return (
-    <div className="flex h-screen bg-canvas text-slate-200 font-sans overflow-hidden selection:bg-primary/30 selection:text-white">
+    <div className="flex h-screen bg-canvas text-slate-200 font-sans overflow-hidden selection:bg-blue-500/30 selection:text-blue-200">
       <Sidebar activeModule={activeModule} setActiveModule={setActiveModule} activePatient={activePatient} />
 
       <div className="flex-1 flex flex-col min-w-0 bg-canvas relative">
-        <header className="h-16 flex-none flex items-center justify-between px-6 border-b border-slate-800 bg-canvas/80 backdrop-blur-md z-30">
-          <form onSubmit={handleQuickSearch} className="flex-1 max-w-lg relative">
+        <header className="h-16 flex-none flex items-center justify-between px-8 z-30 pt-6">
+          <form onSubmit={handleQuickSearch} className="flex-1 max-w-sm relative group">
+            <div className="absolute inset-0 bg-blue-500/5 rounded-xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search patient data (e.g., 'Latest chest X-ray findings')"
-              className="input-field pl-10 h-10"
+              placeholder="Find something..."
+              className="w-full bg-slate-900/30 border border-transparent focus:border-slate-800 hover:border-slate-800/50 rounded-xl px-4 py-2 text-sm text-slate-300 focus:text-white outline-none transition-all placeholder:text-slate-600 pl-10 h-10 relative z-10"
             />
-            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-            {isSearching && <div className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>}
+            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600 group-hover:text-slate-400 transition-colors z-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            {isSearching && <div className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 border-2 border-primary border-t-transparent rounded-full animate-spin z-20"></div>}
           </form>
 
           <div className="flex items-center gap-4 ml-6">
-            <div className="text-right hidden sm:block">
-              <p className="text-xs font-bold text-white leading-none">{activePatient.name}</p>
-              <p className="text-[10px] text-slate-500 font-mono mt-1">{activePatient.id}</p>
-            </div>
-            <div className="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-primary">
-              {activePatient.name[0]}
-            </div>
+            {/* Header Actions - Minimal */}
+            <button className="w-8 h-8 rounded-full hover:bg-slate-800/50 flex items-center justify-center text-slate-500 hover:text-white transition-colors">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+            </button>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto relative bg-canvas custom-scrollbar">
-          <div className="w-full h-full">
-            {activeModule === ModuleType.DASHBOARD && renderDashboard()}
-            {activeModule === ModuleType.RADIOLOGY && <RadiologyModule onStudyAdded={(s) => setStudies([...studies, s])} initialStudy={studies[studies.length - 1]} patientId={activePatient.id} />}
-            {activeModule === ModuleType.DOCUMENTS && <DocumentsModule />}
-            {activeModule === ModuleType.DERMVUE && <DermVueModule onCaseAdded={(c) => setDermCases([...dermCases, c])} patientId={activePatient.id} />}
-            {activeModule === ModuleType.SETTINGS && (
-              <div className="flex items-center justify-center h-full text-slate-500 text-sm font-mono">System Configuration Locked • Admin Access Required</div>
-            )}
+        <main className="flex-1 overflow-y-auto relative bg-canvas custom-scrollbar p-6">
+          <div className="w-full h-full max-w-7xl mx-auto rounded-3xl bg-slate-900/20 ring-1 ring-white/5 overflow-hidden relative">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+            <div className="h-full overflow-y-auto custom-scrollbar">
+              {activeModule === ModuleType.DASHBOARD && renderDashboard()}
+              {activeModule === ModuleType.RADIOLOGY && <RadiologyModule onStudyAdded={(s) => setStudies([...studies, s])} initialStudy={studies[studies.length - 1]} patientId={activePatient.id} />}
+              {activeModule === ModuleType.DOCUMENTS && <DocumentsModule />}
+              {activeModule === ModuleType.DERMVUE && <DermVueModule onCaseAdded={(c) => setDermCases([...dermCases, c])} patientId={activePatient.id} />}
+            </div>
           </div>
         </main>
 
         {searchResults && (
-          <div className="absolute inset-0 z-50 flex items-start justify-center pt-24 px-8 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="w-full max-w-4xl bg-card border border-slate-700 rounded-xl shadow-2xl max-h-[80vh] flex flex-col overflow-hidden">
+          <div className="absolute inset-0 z-50 flex items-start justify-center pt-24 px-8 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="w-full max-w-4xl bg-card border border-slate-700/50 rounded-2xl shadow-2xl max-h-[80vh] flex flex-col overflow-hidden ring-1 ring-white/10">
               <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/80">
                 <span className="text-xs font-bold text-primary uppercase tracking-widest flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-primary"></span>
-                  MedGemma Intelligence
+                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                  AI Analysis
                 </span>
                 <button onClick={() => setSearchResults(null)} className="p-1.5 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
-              <div className="p-8 overflow-y-auto custom-scrollbar bg-canvas/50">
+              <div className="p-8 overflow-y-auto custom-scrollbar bg-slate-900/50 text-slate-300">
                 {renderClinicalReport(searchResults)}
-              </div>
-              <div className="p-4 bg-slate-900 border-t border-slate-800 flex justify-end">
-                <button onClick={() => setSearchResults(null)} className="btn-primary text-xs uppercase tracking-wider">Close Analysis</button>
               </div>
             </div>
           </div>
