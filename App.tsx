@@ -34,7 +34,8 @@ const App: React.FC = () => {
       const result = await performGlobalSearch(searchQuery, context);
       setSearchResults(result || "No relevant data found.");
     } catch (err) {
-      setSearchResults("# ⚠️ Error\nAnalysis engine offline.");
+      setSearchResults("# ⚠️ Error\nAnalysis engine offline. Check console for details.");
+      console.error("Global Search Error:", err);
     } finally {
       setIsSearching(false);
     }
