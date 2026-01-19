@@ -4,9 +4,20 @@ import { saveDiagnosticResult } from "./databaseService";
 
 // Helper to validate and get key
 const getAPIKey = () => {
-  const key = import.meta.env.VITE_API_KEY || ''; // Vite standard
+  // Try standard Vite key first, then fallbacks that might be injected by vite define
+  let key = import.meta.env.VITE_API_KEY;
+
+  if (!key) {
+    // Check for process.env variables injected by Vite 'define'
+    // @ts-ignore
+    if (typeof process !== 'undefined' && process.env) {
+      // @ts-ignore
+      key = process.env.GEMINI_API_KEY || process.env.API_KEY;
+    }
+  }
+
   if (!key || key.includes('your_gemini_api_key')) {
-    console.error("Gemini API Key is missing or invalid. Please check context.");
+    console.error("Gemini API Key is missing or invalid. Please check .env file.");
     throw new Error("Missing/Invalid API Key");
   }
   return key;
