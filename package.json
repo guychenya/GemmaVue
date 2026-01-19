@@ -11,17 +11,18 @@
   },
   "dependencies": {
     "@google/genai": "^1.36.0",
+    "@google/generative-ai": "^0.24.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "surrealdb": "^1.3.2"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0-alpha.12",
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.17",
     "postcss": "^8.4.35",
     "tailwindcss": "^4.0.0-alpha.12",
-    "@tailwindcss/postcss": "^4.0.0-alpha.12",
     "typescript": "~5.7.2",
     "vite": "^6.0.0"
   }
